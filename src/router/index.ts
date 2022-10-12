@@ -1,4 +1,5 @@
 import ModulesView from "@/views/Modules.vue";
+import ModuleDetails from "@/views/ModuleDetails.vue";
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import HomeView from "../views/HomeView.vue";
@@ -20,7 +21,11 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
-
+  {
+    path: "/modules/:id",
+    name: "module",
+    component: ModuleDetails
+  },
   {
     path: "/modules",
     name: "modules",

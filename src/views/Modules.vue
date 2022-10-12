@@ -17,10 +17,10 @@
             <v-card-text>
               <v-row class="mt-4">
                 <v-col cols="12">
-                  <v-text-field outlined label="Name" dense></v-text-field>
+                  <v-text-field outlined label="Name" dense v-model="newModuleName"></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-textarea outlined label="Description" dense></v-textarea>
+                  <v-textarea outlined label="Description" dense v-model="newModuleDescription"></v-textarea>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -30,13 +30,16 @@
             <v-card-actions>
               <v-btn depressed @click="dialog = false"> Cancel </v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="createModule"> Create </v-btn>
+              <v-btn color="primary" text @click="createModule" :disabled="creating" :loading="creating">
+                Create
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-col>
       <v-col v-for="(module, i) in modules" :key="i">
-        <v-btn color="primary" class="ew-module">{{ module.name }}</v-btn>
+        <v-btn color="primary" class="ew-module" link :to="{name: 'module', params: {id: module.id}}">{{ module.name }}
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -48,9 +51,10 @@ import axios from "axios";
 
 @Component({ name: "modules" })
 export default class ModulesView extends Vue {
-  modules = [];
+  modules: any[] = [];
   dialog: boolean | null = null;
 
+  creating = false;
   newModuleName = "";
   newModuleDescription = "";
 
@@ -62,13 +66,20 @@ export default class ModulesView extends Vue {
 
   async createModule() {
     try {
-      await axios.post("https://localhost:7268/api/modules", {
+      this.creating = true;
+      const createdModule = await (await axios.post("https://localhost:7268/api/modules", {
         name: this.newModuleName,
         description: this.newModuleDescription,
-      });
+      })).data;
+      this.modules.push(createdModule);
+
       this.dialog = false;
+      this.newModuleName = '';
+      this.newModuleDescription = '';
     } catch {
       //
+    } finally {
+      this.creating = false;
     }
   }
 }
