@@ -17,10 +17,20 @@
             <v-card-text>
               <v-row class="mt-4">
                 <v-col cols="12">
-                  <v-text-field outlined label="Name" dense v-model="newModuleName"></v-text-field>
+                  <v-text-field
+                    outlined
+                    label="Name"
+                    dense
+                    v-model="newModuleName"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-textarea outlined label="Description" dense v-model="newModuleDescription"></v-textarea>
+                  <v-textarea
+                    outlined
+                    label="Description"
+                    dense
+                    v-model="newModuleDescription"
+                  ></v-textarea>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -30,7 +40,13 @@
             <v-card-actions>
               <v-btn depressed @click="dialog = false"> Cancel </v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="createModule" :disabled="creating" :loading="creating">
+              <v-btn
+                color="primary"
+                text
+                @click="createModule"
+                :disabled="creating"
+                :loading="creating"
+              >
                 Create
               </v-btn>
             </v-card-actions>
@@ -38,7 +54,12 @@
         </v-dialog>
       </v-col>
       <v-col v-for="(module, i) in modules" :key="i">
-        <v-btn color="primary" class="ew-module" link :to="{name: 'module', params: {id: module.id}}">{{ module.name }}
+        <v-btn
+          color="primary"
+          class="ew-module"
+          link
+          :to="{ name: 'module', params: { id: module.id } }"
+          >{{ module.name }}
         </v-btn>
       </v-col>
     </v-row>
@@ -60,22 +81,24 @@ export default class ModulesView extends Vue {
 
   async mounted() {
     this.modules = await (
-      await axios.get("https://localhost:7268/api/modules")
+      await axios.get(`${process.env.VUE_APP_BASE_URL}api/modules`)
     ).data;
   }
 
   async createModule() {
     try {
       this.creating = true;
-      const createdModule = await (await axios.post("https://localhost:7268/api/modules", {
-        name: this.newModuleName,
-        description: this.newModuleDescription,
-      })).data;
+      const createdModule = await (
+        await axios.post(`${process.env.VUE_APP_BASE_URL}api/modules`, {
+          name: this.newModuleName,
+          description: this.newModuleDescription,
+        })
+      ).data;
       this.modules.push(createdModule);
 
       this.dialog = false;
-      this.newModuleName = '';
-      this.newModuleDescription = '';
+      this.newModuleName = "";
+      this.newModuleDescription = "";
     } catch {
       //
     } finally {

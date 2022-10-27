@@ -34,6 +34,12 @@
     <v-row v-for="(word, i) in module.words" :key="i">
       <v-col cols="5">{{ word.text }}</v-col>
       <v-col cols="5">{{ word.translate }}</v-col>
+      <v-col cols="2">
+        <v-btn color="red" @click="removeWord(word.id)" dark>
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-col>
+      <hr />
     </v-row>
   </v-container>
   <span v-else>loading...</span>
@@ -58,7 +64,7 @@ type Module = {
 
 @Component({ name: "module" })
 export default class ModuleDetails extends Vue {
-  module: Module;
+  module: Module | null = null;
   loading = true;
   creating = false;
 
@@ -69,7 +75,7 @@ export default class ModuleDetails extends Vue {
     try {
       this.module = await (
         await axios.get(
-          `https://localhost:7268/api/modules/${this.$route.params.id}`
+          `${process.env.VUE_APP_BASE_URL}api/modules/${this.$route.params.id}`
         )
       ).data;
     } finally {
@@ -84,7 +90,7 @@ export default class ModuleDetails extends Vue {
       this.creating = true;
 
       const createdWord = await (
-        await axios.post<Word>(`https://localhost:7268/api/words`, {
+        await axios.post<Word>(`${process.env.VUE_APP_BASE_URL}api/words`, {
           moduleId: this.module.id,
           text: this.wordText,
           translate: this.wordTranslate,
@@ -97,6 +103,12 @@ export default class ModuleDetails extends Vue {
     } finally {
       this.creating = false;
     }
+  }
+
+  async removeWord(wordId: string) {
+    await axios.delete(`${process.env.VUE_APP_BASE_URL}api/words/${wordId}`);
+
+    this.module.words = this.module.words.filter((x) => x.id !== wordId);
   }
 }
 </script>

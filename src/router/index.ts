@@ -3,6 +3,8 @@ import ModuleDetails from "@/views/ModuleDetails.vue";
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import Exercises from "../views/Exercises.vue";
+import Exercise from "../views/Exercise.vue";
 
 Vue.use(VueRouter);
 
@@ -31,6 +33,16 @@ const routes: Array<RouteConfig> = [
     name: "modules",
     component: ModulesView,
   },
+  {
+    path: "/exercises/:id",
+    name: "exercise",
+    component: Exercise,
+  },
+  {
+    path: "/exercises",
+    name: "exercises",
+    component: Exercises,
+  }
 ];
 
 const router = new VueRouter({
